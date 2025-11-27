@@ -1,0 +1,64 @@
+{
+  "id": "com.auroramelody.chord-progression",
+  "name": "Chord Progression Builder",
+  "version": "1.0.0",
+  "author": "Aurora Melody Labs",
+  "description": "Generates chord progressions in various styles",
+  "entry": "main.py",
+  "icon": "icon.png",
+  "tags": ["chord", "progression", "harmony"],
+  "hasUI": true,
+  "license": "MIT",
+  "parameters": [
+    {
+      "id": "progression",
+      "name": "Progression",
+      "type": "choice",
+      "default": "I-IV-V-I",
+      "choices": ["I-IV-V-I", "I-V-vi-IV", "ii-V-I", "I-vi-IV-V", "I-IV-vi-V", "vi-IV-I-V", "I-V-IV-I"],
+      "description": "Chord progression pattern"
+    },
+    {
+      "id": "key",
+      "name": "Key",
+      "type": "choice",
+      "default": "C",
+      "choices": ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"],
+      "description": "Root key of the progression"
+    },
+    {
+      "id": "mode",
+      "name": "Mode",
+      "type": "choice",
+      "default": "Major",
+      "choices": ["Major", "Minor"],
+      "description": "Major or minor mode"
+    },
+    {
+      "id": "bars_per_chord",
+      "name": "Bars per Chord",
+      "type": "int",
+      "default": 1,
+      "min": 1,
+      "max": 4,
+      "description": "Duration of each chord in bars"
+    },
+    {
+      "id": "voicing",
+      "name": "Voicing",
+      "type": "choice",
+      "default": "Close",
+      "choices": ["Close", "Open", "Drop 2", "Spread"],
+      "description": "Chord voicing style"
+    },
+    {
+      "id": "octave",
+      "name": "Octave",
+      "type": "int",
+      "default": 4,
+      "min": 2,
+      "max": 6,
+      "description": "Base octave for chords"
+    }
+  ]
+}

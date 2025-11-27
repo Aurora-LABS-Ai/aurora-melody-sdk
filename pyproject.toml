@@ -1,0 +1,80 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "aurora-melody-sdk"
+version = "1.0.0"
+description = "SDK for creating Aurora Melody plugins - generate melodies with Python"
+readme = "README.md"
+license = {text = "MIT"}
+authors = [
+    {name = "Aurora Melody Labs", email = "dev@auroramelody.com"}
+]
+maintainers = [
+    {name = "Aurora Melody Labs", email = "dev@auroramelody.com"}
+]
+keywords = [
+    "aurora-melody",
+    "midi",
+    "music",
+    "plugin",
+    "melody",
+    "generator",
+    "daw",
+    "synthesizer"
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Multimedia :: Sound/Audio :: MIDI",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+]
+requires-python = ">=3.8"
+dependencies = []
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0",
+    "pytest-cov>=4.0",
+    "black>=23.0",
+    "mypy>=1.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/aurora-melody/sdk"
+Documentation = "https://github.com/aurora-melody/sdk#readme"
+Repository = "https://github.com/aurora-melody/sdk"
+Issues = "https://github.com/aurora-melody/sdk/issues"
+
+[project.scripts]
+aurora-pack = "aurora_melody_sdk.cli.pack:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+aurora_melody_sdk = ["py.typed"]
+
+[tool.black]
+line-length = 100
+target-version = ["py38", "py39", "py310", "py311", "py312"]
+
+[tool.mypy]
+python_version = "3.8"
+warn_return_any = true
+warn_unused_configs = true
+ignore_missing_imports = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+

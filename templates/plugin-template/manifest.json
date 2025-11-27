@@ -1,0 +1,14 @@
+{
+  "id": "com.yourname.plugin-name",
+  "name": "Your Plugin Name",
+  "version": "1.0.0",
+  "author": "Your Name",
+  "description": "A brief description of what your plugin does",
+  "entry": "main.py",
+  "icon": "icon.png",
+  "website": "https://yourwebsite.com",
+  "license": "MIT",
+  "tags": ["melody", "generator"],
+  "hasUI": true
+}
+

@@ -1,0 +1,56 @@
+{
+  "id": "com.auroramelody.arpeggiator",
+  "name": "Arpeggiator",
+  "version": "1.0.0",
+  "author": "Aurora Melody Labs",
+  "description": "Creates arpeggiated patterns from chord shapes",
+  "entry": "main.py",
+  "icon": "icon.png",
+  "tags": ["arpeggio", "chord", "pattern"],
+  "hasUI": true,
+  "license": "MIT",
+  "parameters": [
+    {
+      "id": "chord_type",
+      "name": "Chord Type",
+      "type": "choice",
+      "default": "Major",
+      "choices": ["Major", "Minor", "Major 7", "Minor 7", "Dominant 7", "Diminished", "Augmented", "Sus2", "Sus4"],
+      "description": "Type of chord to arpeggiate"
+    },
+    {
+      "id": "pattern",
+      "name": "Pattern",
+      "type": "choice",
+      "default": "Up",
+      "choices": ["Up", "Down", "Up-Down", "Down-Up", "Random"],
+      "description": "Arpeggio direction pattern"
+    },
+    {
+      "id": "num_bars",
+      "name": "Bars",
+      "type": "int",
+      "default": 2,
+      "min": 1,
+      "max": 8,
+      "description": "Number of bars to generate"
+    },
+    {
+      "id": "note_division",
+      "name": "Note Division",
+      "type": "choice",
+      "default": "1/8",
+      "choices": ["1/4", "1/8", "1/16", "1/32"],
+      "description": "Rhythmic division of notes"
+    },
+    {
+      "id": "velocity",
+      "name": "Velocity",
+      "type": "int",
+      "default": 100,
+      "min": 1,
+      "max": 127,
+      "description": "Note velocity"
+    }
+  ]
+}
