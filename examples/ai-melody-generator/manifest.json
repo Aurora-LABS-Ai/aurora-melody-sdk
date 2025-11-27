@@ -1,0 +1,37 @@
+{
+  "id": "com.auroramelody.ai-melody",
+  "name": "AI Melody Generator",
+  "version": "1.0.0",
+  "author": "Aurora Melody Labs",
+  "description": "AI-powered melody generation using external AI services",
+  "type": "ai",
+  "entry": "main.py",
+  "icon": "icon.png",
+  "tags": ["ai", "melody", "generator", "machine-learning"],
+  "hasUI": true,
+  "license": "MIT",
+  "endpoint": "https://api.example.com/generate",
+  "connectionType": "http_post",
+  "requestTimeout": 30,
+  "extraParameters": [
+    {
+      "id": "model",
+      "name": "AI Model",
+      "type": "choice",
+      "default": "melody-v1",
+      "choices": ["melody-v1", "melody-v2", "experimental"],
+      "description": "AI model version to use"
+    },
+    {
+      "id": "temperature",
+      "name": "Temperature",
+      "type": "float",
+      "default": 0.7,
+      "min": 0.1,
+      "max": 1.0,
+      "step": 0.1,
+      "description": "Controls randomness (higher = more creative)"
+    }
+  ]
+}
+

@@ -501,6 +501,108 @@ aurora-pack --help
 
 ---
 
+## AI Service Plugins
+
+Create plugins that connect to external AI services (HTTP/WebSocket) for AI-powered melody generation.
+
+### Quick Start
+
+```python
+from aurora_melody_sdk import AIServicePlugin, AIRequest, AIResponse, MidiNote
+
+class MyAIPlugin(AIServicePlugin):
+    name = "My AI Melody Generator"
+    author = "Your Name"
+    version = "1.0.0"
+    
+    # Your AI service endpoint
+    endpoint = "https://api.myservice.com/generate"
+    
+    # Optional: Custom request transformation
+    def prepare_request(self, request: AIRequest) -> dict:
+        data = request.to_dict()
+        data["api_key"] = "your-key"
+        return data
+    
+    # Optional: Custom response parsing
+    def parse_response(self, response: dict) -> AIResponse:
+        notes = [MidiNote(n["pitch"], n["time"], n["duration"], 100) 
+                 for n in response["notes"]]
+        return AIResponse(notes=notes)
+```
+
+### Built-in Musical Controls
+
+Aurora Melody provides these controls automatically in the AI panel:
+
+| Control | Type | Description |
+|---------|------|-------------|
+| Key | Choice | Musical key (C, C#, D, etc.) |
+| Scale | Choice | Scale type (Major, Minor, Blues, etc.) |
+| Style | Choice | Musical style (Jazz, Classical, Pop, etc.) |
+| Length | Int | Number of bars (1-32) |
+| Density | Int | Note density (1-10) |
+| Creativity | Int | Creativity level (1-10) |
+| Tempo | Int | BPM (60-200) |
+| Prompt | String | Optional text description |
+
+### Request Format (AIRequest)
+
+```python
+@dataclass
+class AIRequest:
+    key: str = "C"
+    scale: str = "Major"
+    style: str = "Classical"
+    length_bars: int = 8
+    density: int = 5
+    creativity: int = 5
+    tempo_bpm: int = 120
+    prompt: str = ""
+    existing_notes: List[Dict] = []
+    playhead_position: float = 0.0
+    custom: Dict[str, Any] = {}  # Your extra parameters
+```
+
+### Response Format (AIResponse)
+
+```python
+@dataclass
+class AIResponse:
+    notes: List[MidiNote]
+    success: bool = True
+    error: str = ""
+    metadata: Dict[str, Any] = {}
+```
+
+### manifest.json for AI Plugins
+
+```json
+{
+  "id": "com.yourcompany.ai-plugin",
+  "name": "My AI Plugin",
+  "version": "1.0.0",
+  "type": "ai",
+  "entry": "main.py",
+  "endpoint": "https://api.yourservice.com/generate",
+  "connectionType": "http_post",
+  "requestTimeout": 30,
+  "headers": {
+    "Authorization": "Bearer YOUR_API_KEY"
+  },
+  "extraParameters": [
+    {
+      "id": "model",
+      "name": "Model",
+      "type": "choice",
+      "choices": ["v1", "v2"]
+    }
+  ]
+}
+```
+
+---
+
 ## Examples
 
 See the `examples/` folder for complete plugin examples:
@@ -510,6 +612,7 @@ See the `examples/` folder for complete plugin examples:
 | **random-melody** | Random melody generator with scale selection |
 | **arpeggiator** | Chord arpeggiator with pattern options |
 | **chord-progression** | Chord progression builder |
+| **ai-melody-generator** | AI service plugin example |
 
 ---
 

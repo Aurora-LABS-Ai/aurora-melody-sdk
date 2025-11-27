@@ -42,6 +42,11 @@ from aurora_melody_sdk.note import MidiNote
 from aurora_melody_sdk.context import PluginContext
 from aurora_melody_sdk.plugin import AuroraPlugin, PluginParameter, ParameterType
 
+# AI Service Plugin
+from aurora_melody_sdk.ai_plugin import (
+    AIServicePlugin, AIRequest, AIResponse, ConnectionType
+)
+
 # Music theory
 from aurora_melody_sdk.theory import Scale, Chord, NoteName
 
@@ -57,6 +62,11 @@ __all__ = [
     "PluginContext",
     "PluginParameter",
     "ParameterType",
+    # AI Service
+    "AIServicePlugin",
+    "AIRequest",
+    "AIResponse",
+    "ConnectionType",
     # Theory
     "Scale",
     "Chord",
