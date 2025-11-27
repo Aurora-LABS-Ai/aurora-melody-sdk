@@ -503,77 +503,81 @@ aurora-pack --help
 
 ## AI Service Plugins
 
-Create plugins that connect to external AI services (HTTP/WebSocket) for AI-powered melody generation.
+Create plugins that connect to external AI services for AI-powered melody generation.
+**The SDK controls everything** - you define your endpoint (hidden from user), UI controls, and response handling.
 
 ### Quick Start
 
 ```python
-from aurora_melody_sdk import AIServicePlugin, AIRequest, AIResponse, MidiNote
+from aurora_melody_sdk import AIServicePlugin, AIControl, AIControlType
 
 class MyAIPlugin(AIServicePlugin):
-    name = "My AI Melody Generator"
+    name = "My AI Generator"
     author = "Your Name"
     version = "1.0.0"
     
-    # Your AI service endpoint
+    # Your endpoint (hidden from user)
     endpoint = "https://api.myservice.com/generate"
     
-    # Optional: Custom request transformation
-    def prepare_request(self, request: AIRequest) -> dict:
-        data = request.to_dict()
-        data["api_key"] = "your-key"
-        return data
+    # Define UI controls
+    controls = [
+        AIControl("temperature", "Temperature", AIControlType.KNOB,
+                  default=0.7, min_value=0.1, max_value=1.0),
+        AIControl("style", "Style", AIControlType.DROPDOWN,
+                  default="Jazz", choices=["Jazz", "Pop", "Classical"]),
+    ]
     
-    # Optional: Custom response parsing
-    def parse_response(self, response: dict) -> AIResponse:
-        notes = [MidiNote(n["pitch"], n["time"], n["duration"], 100) 
-                 for n in response["notes"]]
-        return AIResponse(notes=notes)
+    # Optional: text input
+    has_input = True
+    input_placeholder = "Describe your melody..."
+    
+    def build_request(self, params: dict) -> dict:
+        return {
+            "temperature": params.get("temperature", 0.7),
+            "style": params.get("style", "Jazz"),
+            "prompt": params.get("_input", ""),
+        }
 ```
 
-### Built-in Musical Controls
+### Available Control Types
 
-Aurora Melody provides these controls automatically in the AI panel:
+| Type | Description | Properties |
+|------|-------------|------------|
+| `KNOB` | Rotary knob | min, max, step, default |
+| `SLIDER` | Horizontal slider | min, max, step, default |
+| `DROPDOWN` | Dropdown selector | choices, default |
+| `TOGGLE` | On/Off switch | default (bool) |
+| `BUTTON` | Push button | - |
+| `INPUT` | Text input | placeholder, default |
+| `LABEL` | Read-only text | default |
 
-| Control | Type | Description |
-|---------|------|-------------|
-| Key | Choice | Musical key (C, C#, D, etc.) |
-| Scale | Choice | Scale type (Major, Minor, Blues, etc.) |
-| Style | Choice | Musical style (Jazz, Classical, Pop, etc.) |
-| Length | Int | Number of bars (1-32) |
-| Density | Int | Note density (1-10) |
-| Creativity | Int | Creativity level (1-10) |
-| Tempo | Int | BPM (60-200) |
-| Prompt | String | Optional text description |
+### Expected API Response Format
 
-### Request Format (AIRequest)
+Your AI service should return this JSON format:
 
-```python
-@dataclass
-class AIRequest:
-    key: str = "C"
-    scale: str = "Major"
-    style: str = "Classical"
-    length_bars: int = 8
-    density: int = 5
-    creativity: int = 5
-    tempo_bpm: int = 120
-    prompt: str = ""
-    existing_notes: List[Dict] = []
-    playhead_position: float = 0.0
-    custom: Dict[str, Any] = {}  # Your extra parameters
+```json
+{
+  "status": "success",
+  "request_id": "uuid-string",
+  "timestamp": "ISO-timestamp",
+  "melodies": [
+    {
+      "id": "melody-id",
+      "notes": [
+        {"pitch": 60, "start_time": 0, "duration": 0.5, "velocity": 100, "channel": 0},
+        {"pitch": 64, "start_time": 0.5, "duration": 0.25, "velocity": 90, "channel": 0}
+      ]
+    }
+  ]
+}
 ```
 
-### Response Format (AIResponse)
-
-```python
-@dataclass
-class AIResponse:
-    notes: List[MidiNote]
-    success: bool = True
-    error: str = ""
-    metadata: Dict[str, Any] = {}
-```
+Note fields:
+- `pitch`: MIDI note number (0-127)
+- `start_time`: Start position in beats
+- `duration`: Length in beats
+- `velocity`: Note velocity (0-127)
+- `channel`: MIDI channel (0-based)
 
 ### manifest.json for AI Plugins
 
@@ -585,19 +589,14 @@ class AIResponse:
   "type": "ai",
   "entry": "main.py",
   "endpoint": "https://api.yourservice.com/generate",
-  "connectionType": "http_post",
-  "requestTimeout": 30,
-  "headers": {
-    "Authorization": "Bearer YOUR_API_KEY"
-  },
-  "extraParameters": [
-    {
-      "id": "model",
-      "name": "Model",
-      "type": "choice",
-      "choices": ["v1", "v2"]
-    }
-  ]
+  "controls": [
+    {"id": "temperature", "name": "Temperature", "type": "knob",
+     "default": 0.7, "min": 0.1, "max": 1.0, "step": 0.1},
+    {"id": "style", "name": "Style", "type": "dropdown",
+     "default": "Jazz", "choices": ["Jazz", "Pop", "Classical"]}
+  ],
+  "hasInput": true,
+  "inputPlaceholder": "Describe your melody..."
 }
 ```
 

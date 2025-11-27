@@ -44,7 +44,7 @@ from aurora_melody_sdk.plugin import AuroraPlugin, PluginParameter, ParameterTyp
 
 # AI Service Plugin
 from aurora_melody_sdk.ai_plugin import (
-    AIServicePlugin, AIRequest, AIResponse, ConnectionType
+    AIServicePlugin, AIControl, AIControlType, AIResponse
 )
 
 # Music theory
@@ -64,9 +64,9 @@ __all__ = [
     "ParameterType",
     # AI Service
     "AIServicePlugin",
-    "AIRequest",
+    "AIControl",
+    "AIControlType",
     "AIResponse",
-    "ConnectionType",
     # Theory
     "Scale",
     "Chord",
