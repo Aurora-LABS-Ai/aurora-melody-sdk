@@ -50,10 +50,10 @@ dev = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/aurora-melody/sdk"
-Documentation = "https://github.com/aurora-melody/sdk#readme"
-Repository = "https://github.com/aurora-melody/sdk"
-Issues = "https://github.com/aurora-melody/sdk/issues"
+Homepage = "https://github.com/Aurora-LABS-Ai/aurora-melody-sdk"
+Documentation = "https://github.com/Aurora-LABS-Ai/aurora-melody-sdk#readme"
+Repository = "https://github.com/Aurora-LABS-Ai/aurora-melody-sdk"
+Issues = "https://github.com/Aurora-LABS-Ai/aurora-melody-sdk/issues"
 
 [project.scripts]
 aurora-pack = "aurora_melody_sdk.cli.pack:main"

@@ -19,7 +19,7 @@ pip install aurora-melody-sdk
 Or install from source:
 
 ```bash
-git clone https://github.com/aurora-melody/sdk.git
+git clone https://github.com/Aurora-LABS-Ai/aurora-melody-sdk.git
 cd aurora-melody-sdk
 pip install -e .
 ```
@@ -549,6 +549,6 @@ MIT License - see [LICENSE](LICENSE) file.
 
 ## Links
 
-- [GitHub Repository](https://github.com/aurora-melody/sdk)
-- [Issue Tracker](https://github.com/aurora-melody/sdk/issues)
-- [Documentation](https://github.com/aurora-melody/sdk#readme)
+- [GitHub Repository](https://github.com/Aurora-LABS-Ai/aurora-melody-sdk)
+- [Issue Tracker](https://github.com/Aurora-LABS-Ai/aurora-melody-sdk/issues)
+- [Documentation](https://github.com/Aurora-LABS-Ai/aurora-melody-sdk#readme)
