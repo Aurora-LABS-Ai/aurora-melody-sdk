@@ -503,46 +503,64 @@ aurora-pack --help
 
 ## AI Service Plugins
 
-Create plugins that connect to external AI services for AI-powered melody generation.
-**The SDK controls everything** - you define your endpoint (hidden from user), UI controls, and response handling.
+Create plugins that connect to YOUR AI service. **Plugin handles everything** - Aurora Melody just receives standard `MidiNote` objects.
+
+### The Flow
+
+```
+User clicks Generate
+       ↓
+Plugin.generate(context) called
+       ↓
+YOUR plugin:
+  1. Builds YOUR request format
+  2. Calls YOUR endpoint
+  3. Parses YOUR response format
+  4. Returns List[MidiNote]
+       ↓
+Aurora Melody receives standard MidiNote
+       ↓
+Notes appear in piano roll
+```
 
 ### Quick Start
 
 ```python
-from aurora_melody_sdk import AIServicePlugin, AIControl, AIControlType
+from aurora_melody_sdk import AIServicePlugin, AIControl, AIControlType, MidiNote
 
 class MyAIPlugin(AIServicePlugin):
     name = "My AI Generator"
-    author = "Your Name"
-    version = "1.0.0"
-    
-    # Your endpoint (hidden from user)
     endpoint = "https://api.myservice.com/generate"
     
-    # Define UI controls
     controls = [
-        AIControl("temperature", "Temperature", AIControlType.KNOB,
-                  default=0.7, min_value=0.1, max_value=1.0),
-        AIControl("style", "Style", AIControlType.DROPDOWN,
-                  default="Jazz", choices=["Jazz", "Pop", "Classical"]),
+        AIControl("temp", "Temperature", AIControlType.KNOB, 0.7, 0.1, 1.0),
     ]
     
-    # Optional: text input
-    has_input = True
-    input_placeholder = "Describe your melody..."
-    
-    def build_request(self, params: dict) -> dict:
-        return {
-            "temperature": params.get("temperature", 0.7),
-            "style": params.get("style", "Jazz"),
-            "prompt": params.get("_input", ""),
-        }
+    def generate(self, context) -> list[MidiNote]:
+        # 1. Build YOUR request
+        request = {"temperature": context.get_param("temp", 0.7)}
+        
+        # 2. Call YOUR endpoint
+        response = self.call_endpoint(request)
+        
+        # 3. Parse YOUR response (whatever format your API returns)
+        notes = []
+        for n in response["my_notes"]:  # YOUR field names
+            notes.append(MidiNote(
+                note_number=n["p"],      # YOUR field
+                start_beat=n["t"],       # YOUR field
+                length_beats=n["d"],     # YOUR field
+                velocity=n["v"]          # YOUR field
+            ))
+        
+        # 4. Return standard MidiNote
+        return notes
 ```
 
 ### Available Control Types
 
-| Type | Description | Properties |
-|------|-------------|------------|
+| Type | Renders As | Properties |
+|------|------------|------------|
 | `KNOB` | Rotary knob | min, max, step, default |
 | `SLIDER` | Horizontal slider | min, max, step, default |
 | `DROPDOWN` | Dropdown selector | choices, default |
@@ -551,33 +569,38 @@ class MyAIPlugin(AIServicePlugin):
 | `INPUT` | Text input | placeholder, default |
 | `LABEL` | Read-only text | default |
 
-### Expected API Response Format
+### Helper: Common Response Format
 
-Your AI service should return this JSON format:
+If your API returns this common format:
 
 ```json
 {
   "status": "success",
-  "request_id": "uuid-string",
-  "timestamp": "ISO-timestamp",
-  "melodies": [
-    {
-      "id": "melody-id",
-      "notes": [
-        {"pitch": 60, "start_time": 0, "duration": 0.5, "velocity": 100, "channel": 0},
-        {"pitch": 64, "start_time": 0.5, "duration": 0.25, "velocity": 90, "channel": 0}
-      ]
-    }
-  ]
+  "melodies": [{"notes": [{"pitch": 60, "start_time": 0, "duration": 0.5, "velocity": 100}]}]
 }
 ```
 
-Note fields:
-- `pitch`: MIDI note number (0-127)
-- `start_time`: Start position in beats
-- `duration`: Length in beats
-- `velocity`: Note velocity (0-127)
-- `channel`: MIDI channel (0-based)
+Use the helper:
+
+```python
+def generate(self, context):
+    response = self.call_endpoint({"temp": 0.7})
+    return self.parse_standard_response(response)  # Helper method
+```
+
+### Your Own Format
+
+Your API can return ANY format - you parse it:
+
+```python
+# API returns: {"result": [{"note": 60, "time": 0, "len": 0.5}]}
+def generate(self, context):
+    response = self.call_endpoint(request)
+    return [
+        MidiNote(n["note"], n["time"], n["len"], 100)
+        for n in response["result"]
+    ]
+```
 
 ### manifest.json for AI Plugins
 
@@ -585,18 +608,14 @@ Note fields:
 {
   "id": "com.yourcompany.ai-plugin",
   "name": "My AI Plugin",
-  "version": "1.0.0",
   "type": "ai",
   "entry": "main.py",
   "endpoint": "https://api.yourservice.com/generate",
   "controls": [
-    {"id": "temperature", "name": "Temperature", "type": "knob",
-     "default": 0.7, "min": 0.1, "max": 1.0, "step": 0.1},
-    {"id": "style", "name": "Style", "type": "dropdown",
-     "default": "Jazz", "choices": ["Jazz", "Pop", "Classical"]}
+    {"id": "temp", "name": "Temperature", "type": "knob", "default": 0.7, "min": 0.1, "max": 1.0}
   ],
   "hasInput": true,
-  "inputPlaceholder": "Describe your melody..."
+  "inputPlaceholder": "Describe melody..."
 }
 ```
 
